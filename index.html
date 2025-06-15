@@ -12,9 +12,7 @@
   <h1>Bond Web Service</h1>
   <a href="year" class="category">Bond Films By Year</a><br />
   <a href="box" class="category">Bond Films By International Box Office Totals</a>
-  <h3 id="filmtitle">Title Will Go Here</h3>
-  <div id="films"><p>Films will go here</p></div>
-  <div id="output">Results go here</div>
+  <div id="output" style="margin-top: 2em;">Click one of the links above to see results.</div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -29,17 +27,38 @@
 
     var url = "https://newmanix.com/classes/it122/bond-web-service/";
     async function loadAJAX(cat) {
+      document.getElementById("output").innerHTML = "";
       const endpoint = url + "api.php?cat=" + cat;
       try {
         const response = await fetch(endpoint, { method: "GET", mode: "cors" });
         if (!response.ok) throw new Error("HTTP error " + response.status);
         const data = await response.json();
-        console.log(data);
+
+        data.films.forEach(film =>{
+          const filmHTML = filmTemplate(film);
+          document.getElementById("output").innerHTML += filmHTML;
+        });
       } catch (err) {
         document.getElementById("output").innerText = "Error loading data: " + err;
       }
     }
 
+    function filmTemplate(film) {
+      return `
+      <div class="film">
+        <h1><strong>Title:</strong> ${film.Title}</h1>
+        <p><strong>Year:</strong> ${film.Year}</p>
+        <p><strong>Director:</strong> ${film.Director}</p>
+        <p><strong>Producers:</strong> ${film.Producers}</p>
+        <p><strong>Writers:</strong> ${film.Writers}</p>
+        <p><strong>Composer:</strong> ${film.Composer}</p>
+        <p><strong>Bond Actor:</strong> ${film.Bond}</p>
+        <p><strong>Budget:</strong> ${film.Budget}</p>
+        <p><strong>Box Office:</strong> ${film.BoxOffice}</p>
+        <img class="pic" src="${url}/images/${film.Image}" alt="${film.Title} poster" width=100px height=100px/>
+        <hr width="100%">
+      </div>`;
+    }
   </script>
 </body>
 </html>
